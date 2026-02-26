@@ -166,7 +166,7 @@ const Toast = ({ message, type = 'success', onClose }) => (
         animate={{ opacity: 1, x: 0, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border backdrop-blur-md ${type === 'success' ? 'bg-emerald-50/90 border-emerald-200 text-emerald-800 dark:bg-emerald-900/90 dark:border-emerald-700 dark:text-emerald-100' :
-                'bg-indigo-50/90 border-indigo-200 text-indigo-800 dark:bg-indigo-900/90 dark:border-indigo-700 dark:text-indigo-100'
+            'bg-indigo-50/90 border-indigo-200 text-indigo-800 dark:bg-indigo-900/90 dark:border-indigo-700 dark:text-indigo-100'
             }`}
     >
         {type === 'success' ? <CheckCircle2 size={18} /> : <Sparkles size={18} />}
@@ -297,7 +297,7 @@ const Dashboard = () => {
                         {MOCK_ACTIVITY.map((activity) => (
                             <div key={activity.id} className="flex items-start gap-4 p-3 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                                 <div className={`mt-1 p-2 rounded-full ${activity.status === 'Passed' ? 'bg-emerald-100 text-emerald-600' :
-                                        activity.status === 'Unlocked' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
+                                    activity.status === 'Unlocked' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600'
                                     }`}>
                                     {activity.type === 'submission' ? <Terminal size={14} /> : <Trophy size={14} />}
                                 </div>
@@ -355,8 +355,8 @@ const QuestionGenerator = () => {
                                     key={d}
                                     onClick={() => setDifficulty(d)}
                                     className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${difficulty === d
-                                            ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-white'
-                                            : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400'
+                                        ? 'bg-white dark:bg-zinc-700 shadow-sm text-indigo-600 dark:text-white'
+                                        : 'text-zinc-500 hover:text-zinc-700 dark:text-zinc-400'
                                         }`}
                                 >
                                     {d}
@@ -523,6 +523,7 @@ const PracticeArena = ({ onShowToast }) => {
     const [submitting, setSubmitting] = useState(false);
     const [output, setOutput] = useState(null);
     const [submitted, setSubmitted] = useState(false);
+    const [activeTab, setActiveTab] = useState('problem'); // 'problem', 'editor', 'console'
 
     const runCode = () => {
         setRunning(true);
@@ -551,10 +552,25 @@ const PracticeArena = ({ onShowToast }) => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="h-[calc(100vh-140px)] flex flex-col lg:flex-row gap-4 overflow-hidden"
+            className="h-[calc(100vh-140px)] md:h-[calc(100vh-160px)] flex flex-col lg:flex-row gap-4 overflow-hidden"
         >
+            {/* Mobile Tabs */}
+            <div className="flex lg:hidden bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl mb-2">
+                {['problem', 'editor', 'console'].map(tab => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all capitalize ${activeTab === tab
+                            ? 'bg-white dark:bg-zinc-700 text-indigo-600 dark:text-white shadow-sm'
+                            : 'text-zinc-500'}`}
+                    >
+                        {tab}
+                    </button>
+                ))}
+            </div>
+
             {/* Question Panel */}
-            <Card className="w-full lg:w-1/3 flex flex-col">
+            <Card className={`w-full lg:w-1/3 flex flex-col ${activeTab !== 'problem' ? 'hidden lg:flex' : 'flex'}`}>
                 <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
                     <h2 className="font-bold flex items-center gap-2">
                         <LayoutDashboard size={18} className="text-indigo-500" />
@@ -562,9 +578,9 @@ const PracticeArena = ({ onShowToast }) => {
                     </h2>
                     <Badge variant="warning">Medium</Badge>
                 </div>
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
                     <section>
-                        <h1 className="text-xl font-bold mb-3">Spiral Matrix Traversal</h1>
+                        <h1 className="text-lg md:text-xl font-bold mb-3">Spiral Matrix Traversal</h1>
                         <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
                             Implement an algorithm that extracts elements from a square or rectangular matrix in a spiral pattern, beginning at the top-left and moving clockwise.
                         </p>
@@ -586,10 +602,10 @@ const PracticeArena = ({ onShowToast }) => {
                 </div>
             </Card>
 
-            {/* Editor & Console */}
-            <div className="flex-1 flex flex-col gap-4">
-                {/* Editor */}
-                <Card className="flex-1 flex flex-col min-h-[400px]">
+            {/* Editor & Console Container */}
+            <div className={`flex-1 flex flex-col gap-4 ${activeTab === 'problem' ? 'hidden lg:flex' : 'flex'}`}>
+                {/* Editor Section */}
+                <Card className={`flex-1 flex flex-col min-h-[300px] md:min-h-[400px] ${activeTab === 'console' ? 'hidden lg:flex' : 'flex'}`}>
                     <div className="p-3 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-800/20">
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2 px-3 py-1 bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700">
@@ -601,16 +617,16 @@ const PracticeArena = ({ onShowToast }) => {
                             <button
                                 onClick={runCode}
                                 disabled={running || submitting}
-                                className="flex items-center gap-2 px-4 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-lg text-xs transition-colors"
+                                className="flex items-center gap-2 px-3 md:px-4 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold rounded-lg text-[10px] md:text-xs transition-colors"
                             >
-                                <Play size={14} fill="currentColor" /> Run
+                                <Play size={14} fill="currentColor" /> <span className="hidden md:inline">Run</span>
                             </button>
                             <button
                                 onClick={submitCode}
                                 disabled={running || submitting}
-                                className="flex items-center gap-2 px-6 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition-shadow shadow-md shadow-indigo-200 dark:shadow-none"
+                                className="flex items-center gap-2 px-4 md:px-6 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-[10px] md:text-xs transition-shadow shadow-md shadow-indigo-200 dark:shadow-none"
                             >
-                                <Send size={14} /> Submit
+                                <Send size={14} /> <span className="hidden md:inline">Submit</span>
                             </button>
                         </div>
                     </div>
@@ -622,18 +638,19 @@ const PracticeArena = ({ onShowToast }) => {
                             theme="vs-dark"
                             onChange={(v) => setCode(v)}
                             options={{
-                                fontSize: 14,
+                                fontSize: 13,
                                 minimap: { enabled: false },
                                 scrollBeyondLastLine: false,
                                 smoothScrolling: true,
                                 padding: { top: 16 },
+                                wordWrap: 'on'
                             }}
                         />
                     </div>
                 </Card>
 
-                {/* Console / Results */}
-                <Card className={`h-48 flex flex-col transition-all overflow-hidden ${submitted ? 'h-64' : ''}`}>
+                {/* Console Section */}
+                <Card className={`h-40 md:h-48 flex flex-col transition-all overflow-hidden ${submitted ? 'h-64' : ''} ${activeTab === 'editor' ? 'hidden lg:flex' : 'flex'}`}>
                     <div className="p-3 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/20 flex items-center justify-between">
                         <h3 className="text-xs font-bold flex items-center gap-2">
                             <Terminal size={14} className="text-zinc-400" />
@@ -641,7 +658,7 @@ const PracticeArena = ({ onShowToast }) => {
                         </h3>
                         {output && <Badge variant="success">{output.status}</Badge>}
                     </div>
-                    <div className="flex-1 p-4 bg-zinc-950 text-zinc-300 font-mono text-xs overflow-y-auto">
+                    <div className="flex-1 p-4 bg-zinc-950 text-zinc-300 font-mono text-[10px] md:text-xs overflow-y-auto">
                         {running ? (
                             <div className="flex items-center gap-2 text-zinc-500">
                                 <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
@@ -664,14 +681,14 @@ const PracticeArena = ({ onShowToast }) => {
                         ) : submitted ? (
                             <div className="p-2 space-y-4">
                                 {submitted && <ConfettiEffect />}
-                                <div className="flex items-center justify-between mb-2">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
                                     <div className="flex items-center gap-2">
                                         <Trophy size={16} className="text-amber-500" />
                                         <span className="text-sm font-bold text-white">Score: 100/100</span>
                                     </div>
                                     <Badge variant="success">All Test Cases Passed</Badge>
                                 </div>
-                                <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
+                                <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: '100%' }}
@@ -679,20 +696,20 @@ const PracticeArena = ({ onShowToast }) => {
                                         className="h-full bg-gradient-to-r from-emerald-500 to-indigo-500"
                                     />
                                 </div>
-                                <div className="grid grid-cols-4 gap-4">
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
                                     {[1, 2, 3, 4].map(tc => (
-                                        <div key={tc} className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between group hover:border-emerald-500/30 transition-colors">
-                                            <span className="text-zinc-500 text-[10px] items-center uppercase font-bold tracking-widest">Case {tc}</span>
-                                            <CheckCircle2 size={16} className="text-emerald-500" />
+                                        <div key={tc} className="p-2 md:p-3 bg-zinc-900 border border-zinc-800 rounded-lg md:rounded-xl flex items-center justify-between group hover:border-emerald-500/30 transition-colors">
+                                            <span className="text-zinc-500 text-[8px] md:text-[10px] items-center uppercase font-bold tracking-widest">Case {tc}</span>
+                                            <CheckCircle2 size={14} className="text-emerald-500" />
                                         </div>
                                     ))}
                                 </div>
-                                <Card className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-                                    <div className="flex items-center gap-2 text-indigo-400 font-bold mb-1">
-                                        <Sparkles size={14} /> AI Feedback
+                                <Card className="p-3 md:p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
+                                    <div className="flex items-center gap-2 text-indigo-400 font-bold mb-1 text-xs md:text-sm">
+                                        <Sparkles size={12} /> AI Feedback
                                     </div>
-                                    <p className="text-xs italic text-zinc-400 leading-relaxed">
-                                        Excellent implementation. Your approach handles rectangular matrices correctly by managing pointers efficiently. Consider using `pop(0)` for a cleaner looking list operation if performance permits.
+                                    <p className="text-[10px] md:text-xs italic text-zinc-400 leading-relaxed">
+                                        Excellent implementation. Your approach handles rectangular matrices correctly by managing pointers efficiently.
                                     </p>
                                 </Card>
                             </div>
@@ -730,8 +747,8 @@ const Submissions = () => {
                 </div>
             </div>
 
-            <Card className="overflow-hidden">
-                <table className="w-full text-left border-collapse">
+            <Card className="overflow-hidden overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                         <tr className="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 text-xs font-bold uppercase tracking-wider">
                             <th className="px-6 py-4">Question</th>
@@ -866,6 +883,7 @@ const Analytics = () => {
 export default function App() {
     const [activePage, setActivePage] = useState('dashboard');
     const [collapsed, setCollapsed] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(true);
     const [toast, setToast] = useState(null);
 
@@ -874,6 +892,7 @@ export default function App() {
             const hash = window.location.hash.replace('#', '');
             if (['dashboard', 'generate', 'practice', 'submissions', 'analytics'].includes(hash)) {
                 setActivePage(hash);
+                setMobileMenuOpen(false);
             }
         };
         window.addEventListener('hashchange', handleHashChange);
@@ -898,34 +917,56 @@ export default function App() {
         <div className={`${darkMode ? 'dark' : ''} min-h-screen transition-colors duration-300`}>
             <div className="flex bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen">
 
+                {/* Mobile Sidebar Overlay */}
+                <AnimatePresence>
+                    {mobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] lg:hidden"
+                        />
+                    )}
+                </AnimatePresence>
+
                 {/* Sidebar */}
                 <motion.aside
-                    animate={{ width: collapsed ? 80 : 260 }}
-                    className="fixed h-screen border-r border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl z-50 flex flex-col shadow-xl shadow-indigo-500/5"
+                    initial={false}
+                    animate={{
+                        width: collapsed ? 80 : 260,
+                        x: mobileMenuOpen ? 0 : (window.innerWidth < 1024 ? -260 : 0)
+                    }}
+                    className={`fixed h-screen border-r border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl z-[70] flex flex-col shadow-xl shadow-indigo-500/5 transition-all duration-300 ${mobileMenuOpen ? 'left-0' : 'lg:left-0'}`}
                 >
                     <div className="h-16 flex items-center px-6 gap-3 border-b border-zinc-100 dark:border-zinc-800 overflow-hidden">
                         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
                             <Zap className="text-white" size={18} />
                         </div>
-                        {!collapsed && <span className="font-bold text-lg tracking-tight whitespace-nowrap">PyLMS AI</span>}
+                        {(!collapsed || mobileMenuOpen) && <span className="font-bold text-lg tracking-tight whitespace-nowrap">PyLMS AI</span>}
+                        {mobileMenuOpen && (
+                            <button onClick={() => setMobileMenuOpen(false)} className="ml-auto p-2 lg:hidden">
+                                <X size={20} />
+                            </button>
+                        )}
                     </div>
 
-                    <nav className="flex-1 py-6 px-4 space-y-2">
+                    <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
                         {navItems.map(item => (
                             <button
                                 key={item.id}
                                 onClick={() => window.location.hash = item.id}
                                 className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all relative group ${activePage === item.id
-                                        ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
-                                        : 'text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+                                    ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                                    : 'text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
                                     }`}
                             >
                                 <item.icon size={20} className={activePage === item.id ? 'scale-110 transition-transform' : ''} />
-                                {!collapsed && <span className="font-semibold text-sm">{item.label}</span>}
+                                {(!collapsed || mobileMenuOpen) && <span className="font-semibold text-sm">{item.label}</span>}
                                 {activePage === item.id && (
                                     <motion.div layoutId="nav-pill" className="absolute left-0 w-1 h-6 bg-indigo-600 rounded-r-full" />
                                 )}
-                                {collapsed && (
+                                {collapsed && !mobileMenuOpen && (
                                     <div className="absolute left-full ml-4 px-2 py-1 bg-zinc-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                                         {item.label}
                                     </div>
@@ -936,18 +977,24 @@ export default function App() {
 
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="p-6 border-t border-zinc-100 dark:border-zinc-800 flex items-center gap-3 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                        className="hidden lg:flex p-6 border-t border-zinc-100 dark:border-zinc-800 items-center gap-3 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                     >
                         {collapsed ? <Menu size={20} /> : <div className="flex items-center gap-3"><X size={20} /><span className="text-sm font-medium">Collapse</span></div>}
                     </button>
                 </motion.aside>
 
                 {/* Main Content */}
-                <main className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-[80px]' : 'ml-[260px]'}`}>
+                <main className={`flex-1 transition-all duration-300 min-w-0 ${collapsed ? 'lg:ml-[80px]' : 'lg:ml-[260px]'}`}>
                     {/* Navbar */}
-                    <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-8 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-40">
+                    <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-4 md:px-8 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-40">
                         <div className="flex items-center gap-4 flex-1">
-                            <div className="relative max-w-md w-full">
+                            <button
+                                onClick={() => setMobileMenuOpen(true)}
+                                className="p-2 lg:hidden rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            >
+                                <Menu size={20} />
+                            </button>
+                            <div className="relative max-w-md w-full hidden md:block">
                                 <Search className="absolute left-3 top-2.5 text-zinc-400" size={16} />
                                 <input
                                     type="text"
@@ -955,35 +1002,39 @@ export default function App() {
                                     className="w-full bg-zinc-100 dark:bg-zinc-800 border-none rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium"
                                 />
                             </div>
+                            <div className="lg:hidden flex items-center gap-2">
+                                <Zap className="text-indigo-600" size={20} />
+                                <span className="font-bold text-sm">PyLMS AI</span>
+                            </div>
                         </div>
 
-                        <div className="flex items-center gap-5">
+                        <div className="flex items-center gap-3 md:gap-5">
                             <button
                                 onClick={() => setDarkMode(!darkMode)}
-                                className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                                className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                             >
                                 {darkMode ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
                             </button>
-                            <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center relative cursor-pointer group">
+                            <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center relative cursor-pointer group">
                                 <Bell size={18} />
-                                <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-zinc-900" />
+                                <span className="absolute top-2 right-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-rose-500 rounded-full border-2 border-white dark:border-zinc-900" />
                             </div>
-                            <div className="h-8 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-1" />
+                            <div className="h-6 md:h-8 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-1 hidden xs:block" />
                             <div className="flex items-center gap-3 pl-2">
                                 <div className="text-right hidden sm:block">
                                     <p className="text-xs font-bold">Alex Dev</p>
                                     <p className="text-[10px] text-zinc-500">Premium Scholar</p>
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 p-0.5">
+                                <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 p-0.5">
                                     <div className="w-full h-full rounded-[10px] bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
-                                        <User size={22} className="text-indigo-500" />
+                                        <User size={20} className="text-indigo-500" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </header>
 
-                    <section className="p-8 max-w-7xl mx-auto">
+                    <section className="p-4 md:p-8 max-w-7xl mx-auto">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activePage}
